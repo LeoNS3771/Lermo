@@ -7,10 +7,12 @@ import java.io.IOException;
 
 public class Lermo {
 	
-	public boolean verificarPos(char[] p, char[] t) {
+	public boolean compararPalavras(String palavra, String entrada) {
 		Map<Character, Integer> dicPalavra = new HashMap<>();
 		Map<Character, Integer> dicTentativa = new HashMap<>();	
-		Map<Character, Integer> repetidos = new HashMap<>();
+		
+		char[] p = palavra.toCharArray();
+		char[] t = entrada.toCharArray();
 		
 		Palavra objetivo = new Palavra(p, dicPalavra);
 		Palavra tentativa = new Palavra(t, dicTentativa);
@@ -18,32 +20,37 @@ public class Lermo {
 		objetivo.criarMap();
 		tentativa.criarMap();
 		int acertos = 0;
-		for(int i = 0; i<objetivo.caracteres.length; i++) {
-			char cO = objetivo.caracteres[i];
-			char cT = tentativa.caracteres[i];
-			
-			int diferenca = objetivo.mapa.getOrDefault(cT, 0) - tentativa.mapa.getOrDefault(cT, 0);
-			int posicionados = objetivo.mapa.get(cO) - repetidos.getOrDefault(cT, 0);
+		String[] resultado = new String[5];
+		Map<Character, Integer> letrasRestantes = new HashMap<>(objetivo.mapa);
+		
+		// Verificar acertos (✅) 
+		for(int i = 0; i<5; i++) {
+			char cO = objetivo.caracteres[i];  // cO = caracter do objetivo
+			char cT = tentativa.caracteres[i]; // cT = caracter da tentativa
 			
 			if(cO == cT) {
-				System.out.print("✅");
-				repetidos.put(cO, repetidos.getOrDefault(cO, 0) + 1);
+				resultado[i] = "✅";
 				acertos++;
+				letrasRestantes.put(cT, letrasRestantes.get(cT) - 1); //Letra foi usada
 			}
-			
-			else if(diferenca >= 0)
-				System.out.print("🔄");
-			
-			else if(objetivo.mapa.getOrDefault(cT, 0) != 0 && diferenca < 0) {
-				
-				if(posicionados > 0) {
-					System.out.print("🔄");
+		}
+		
+		// Verificar acertos fora de posição (🔄) ou erros(❌)
+		for(int i = 0; i<5; i++) {
+			if(resultado[i] == null) {
+				char cT = tentativa.caracteres[i];
+				if(letrasRestantes.getOrDefault(cT, 0) > 0) {
+					resultado[i] = "🔄";
+					letrasRestantes.put(cT, letrasRestantes.get(cT) - 1);
 				}
 				else
-					System.out.print("❌");
+					resultado[i] = "❌";
 			}
-			else
-				System.out.print("❌");
+		}
+		
+		// imprimindo resultado
+		for(String r : resultado) {
+			System.out.print(r);
 		}
 		System.out.println();
 		
@@ -55,10 +62,13 @@ public class Lermo {
 	
 	
 	public boolean validarPalavra(String palavra) {
-		
 		if(palavra.length()!=5)
 			return false;
-		
+		char[] caracteres = palavra.toCharArray();
+		for(char c: caracteres) {
+			if(!(c >= 'a' && c <= 'z'))
+				return false;
+		}
 		return true;
 	}
 	

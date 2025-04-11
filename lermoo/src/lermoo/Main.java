@@ -7,12 +7,15 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) {
+    	
         Scanner scanner = new Scanner(System.in);
         Random gerador = new Random();
+        
+        // Gerando palavra aleatoria do arquivo
         String palavra = null;
         int posAleatoria = gerador.nextInt(100) + 1; // de 1 a 100
         int i = 1;
-
+        
         try (BufferedReader leitor = new BufferedReader(new FileReader("palavras.txt"))) {
             while ((palavra = leitor.readLine()) != null) {
                 if (i == posAleatoria) {
@@ -23,27 +26,36 @@ public class Main {
         } catch (IOException e) {
             System.out.println("Erro ao ler o arquivo: " + e.getMessage());
         }
-
+        	
+        // Definindo variaveis
         Lermo lermo = new Lermo();
-        char[] palavraC = palavra.toCharArray(); 
-
-        String tentativa;
+        String entrada;
         int vidas = 6;
+        
+        // Explicacao do jogo
+        System.out.println("---Lermo---\nAcerte a palavra de 5 letras usando as seguintes dicas:");
+        System.out.println("✅ -> posicao correta\n🔄 -> letra correta, mas posicao errada\n❌ -> Letra errada");
+        
+        // Loop do jogo
         while (vidas > 0) {
-            System.out.print("Vidas restantes: " + vidas + "\n-> ");
+            System.out.println("\nVidas restantes: " + vidas);
+            
+            // Entrada do jogador
             do {
-                tentativa = scanner.nextLine();
-            } while (!lermo.validarPalavra(tentativa));
+            	System.out.print("-> ");
+                entrada = scanner.nextLine().toLowerCase();
+                
+            } while (!lermo.validarPalavra(entrada));
 
-            char[] caracteres = tentativa.toCharArray();
-            if (lermo.verificarPos(palavraC, caracteres)) {
-                System.out.println("Voce acertou!\n" + vidas + " pontos");
+            if (lermo.compararPalavras(palavra, entrada)) {
+                System.out.println("\nVoce acertou!\nCom " + vidas + " vidas restantes");
                 scanner.close();
                 return;
             }
             vidas--;
         }
         System.out.println("Voce perdeu\n" + "A palavra era: " + palavra);
+        
         scanner.close();
     }
 }
