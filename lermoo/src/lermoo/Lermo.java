@@ -1,12 +1,11 @@
 package lermoo;
 import java.util.Map;
 import java.util.HashMap;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.List;
+
 
 public class Lermo {
-	
+
 	public boolean compararPalavras(String palavra, String entrada) {
 		Map<Character, Integer> dicPalavra = new HashMap<>();
 		Map<Character, Integer> dicTentativa = new HashMap<>();	
@@ -61,15 +60,16 @@ public class Lermo {
 	}
 	
 	
-	public boolean validarPalavra(String palavra) {
-		if(palavra.length()!=5)
-			return false;
-		char[] caracteres = palavra.toCharArray();
-		for(char c: caracteres) {
-			if(!(c >= 'a' && c <= 'z'))
-				return false;
+	public boolean validarPalavra(String palavra, List<String> listaPalavras) {
+		if(palavra.length() == 5) {
+			
+			for(String s : listaPalavras) {
+				if(palavra.equals(s))
+					return true;
+			}
 		}
-		return true;
+		
+		return false;
 	}
 	
 	
